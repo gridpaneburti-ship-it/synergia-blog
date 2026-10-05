@@ -6,9 +6,8 @@ const blog = defineCollection({
     title: z.string(),
     description: z.string(),
     pubDate: z.coerce.date(),
-    author: z.string().default('Synergia Team'),
+    author: z.string().default('Synergia'),
     tags: z.array(z.string()).default([]),
-    featured: z.boolean().default(false),
   }),
 });
 
