@@ -5,6 +5,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://blog.synergia.website',
   base: '/',
+  trailingSlash: 'always',
   integrations: [sitemap()],
   build: {
     format: 'directory'

@@ -7,7 +7,10 @@ const posts = (await getCollection('blog')).sort(
 );
 ---
 
-<Layout title="Artículos y Notas Técnicas">
+<Layout 
+  title="Artículos y Notas Técnicas"
+  description="Artículos técnicos, notas de arquitectura de sistemas Linux, buenas prácticas con Docker y despliegues empresariales de Odoo ERP explicados por ingenieros."
+>
   <div class="feed-header">
     <h1 class="feed-title">Artículos</h1>
     <p class="feed-intro">
@@ -28,7 +31,7 @@ const posts = (await getCollection('blog')).sort(
         </div>
 
         <h2 class="item-title">
-          <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+          <a href={`/blog/${post.slug}/`}>{post.data.title}</a>
         </h2>
 
         <p class="item-excerpt">{post.data.description}</p>

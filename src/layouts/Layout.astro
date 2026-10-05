@@ -2,10 +2,23 @@
 interface Props {
   title: string;
   description?: string;
+  ogType?: 'website' | 'article';
 }
 
-const { title, description = 'Notas, guías de arquitectura y reflexiones sobre sistemas, Docker y desarrollo.' } = Astro.props;
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const { 
+  title, 
+  description = 'Blog de ingeniería de Synergia. Guías técnicas sobre arquitectura de servidores Linux, contenedores Docker y despliegues de Odoo ERP en producción.',
+  ogType = 'website'
+} = Astro.props;
+
+// Ensure canonical URL always ends with a slash to match directory output (prevents 301 redirects)
+const pathname = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonicalURL = new URL(pathname, Astro.site);
+
+// Format page title to stay within 60 characters for SEO
+const displayTitle = title.length > 45 
+  ? title 
+  : `${title} | Synergia`;
 ---
 
 <!doctype html>
@@ -13,9 +26,29 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} — Synergia Engineering</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{displayTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={displayTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="Synergia Engineering Blog" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:image" content="https://synergia.website/wp-content/uploads/2024/05/cropped-favicon-192x192.png" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={displayTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="https://synergia.website/wp-content/uploads/2024/05/cropped-favicon-192x192.png" />
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
