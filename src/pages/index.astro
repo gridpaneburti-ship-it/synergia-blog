@@ -1,0 +1,229 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featuredPost = posts.find((p) => p.data.featured) || posts[0];
+const otherPosts = posts.filter((p) => p.slug !== featuredPost?.slug);
+---
+
+<Layout title="Recursos, Guías Técnicas y DevOps">
+  <section class="hero-section">
+    <div class="badge-hero">DEVOPS &amp; LINUX SYSADMIN</div>
+    <h1 class="hero-title">
+      Recursos Técnicos y <span class="gradient-text">Mejores Prácticas</span>
+    </h1>
+    <p class="hero-desc">
+      Aprende a dominar Docker, configurar servidores Linux dedicados y desplegar Odoo ERP sin costes abusivos de licencias por usuario.
+    </p>
+  </section>
+
+  {featuredPost && (
+    <div class="featured-wrapper">
+      <div class="featured-label">⚡ GUÍA DESTACADA</div>
+      <article class="featured-card">
+        <div class="card-meta">
+          <time datetime={featuredPost.data.pubDate.toISOString()}>
+            📅 {featuredPost.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </time>
+          <span class="meta-dot">•</span>
+          <span>Por {featuredPost.data.author}</span>
+        </div>
+        <h2 class="featured-title">
+          <a href={`/blog/${featuredPost.slug}`}>{featuredPost.data.title}</a>
+        </h2>
+        <p class="featured-desc">{featuredPost.data.description}</p>
+        <div class="tag-row">
+          {featuredPost.data.tags.map((tag) => (
+            <span class="tag">#{tag}</span>
+          ))}
+        </div>
+        <a href={`/blog/${featuredPost.slug}`} class="btn-read">Leer Guía Completa ➔</a>
+      </article>
+    </div>
+  )}
+
+  <section class="posts-section">
+    <h2 class="section-title">Todos los Artículos Técnicos ({posts.length})</h2>
+    <div class="posts-grid">
+      {otherPosts.map((post) => (
+        <article class="post-card">
+          <time class="post-date" datetime={post.data.pubDate.toISOString()}>
+            {post.data.pubDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' })}
+          </time>
+          <h3 class="post-title">
+            <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+          </h3>
+          <p class="post-desc">{post.data.description}</p>
+          <div class="tag-row">
+            {post.data.tags.map((tag) => (
+              <span class="tag">#{tag}</span>
+            ))}
+          </div>
+          <a href={`/blog/${post.slug}`} class="card-link">Leer artículo ➔</a>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero-section {
+    padding: 60px 0 40px;
+    text-align: center;
+  }
+  .badge-hero {
+    display: inline-block;
+    background: rgba(0, 242, 254, 0.1);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--cyan);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .hero-title {
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-desc {
+    max-width: 680px;
+    margin: 0 auto;
+    color: var(--text-muted);
+    font-size: 1.15rem;
+  }
+
+  /* Featured */
+  .featured-wrapper {
+    margin-bottom: 60px;
+  }
+  .featured-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+  .featured-card {
+    background: linear-gradient(145deg, rgba(15, 23, 42, 0.8), rgba(7, 9, 14, 0.9));
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 242, 254, 0.08);
+    border-radius: 16px;
+    padding: 36px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .featured-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--cyan);
+  }
+  .card-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .meta-dot { margin: 0 6px; }
+  .featured-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .featured-title a { color: #fff; text-decoration: none; }
+  .featured-title a:hover { color: var(--cyan); }
+  .featured-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .btn-read {
+    display: inline-block;
+    background: var(--cyan);
+    color: #07090e;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .btn-read:hover { opacity: 0.9; }
+
+  /* Grid */
+  .section-title {
+    font-size: 1.6rem;
+    color: #fff;
+    margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+  }
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .post-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .post-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  .post-date {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 8px;
+  }
+  .post-title {
+    font-size: 1.25rem;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  .post-title a { color: #fff; text-decoration: none; }
+  .post-title a:hover { color: var(--cyan); }
+  .post-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    flex-grow: 1;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .card-link {
+    color: var(--cyan);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .card-link:hover { text-decoration: underline; }
+</style>
